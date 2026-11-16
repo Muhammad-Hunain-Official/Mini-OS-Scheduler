@@ -31,7 +31,6 @@ void deleteProcess(struct Process p[], int *n);
 void searchProcess(struct Process p[], int n);
 void displayProcesses(struct Process p[], int n);
 void saveProcesses(struct Process p[], int n);
-void loadProcesses(struct Process p[], int *n);
 void runFCFS(struct Process p[], int n, int order[], int start[], int end[]);
 void runSJF(struct Process p[], int n, int order[], int start[], int end[]);
 void runPriority(struct Process p[], int n, int order[], int start[], int end[]);
@@ -560,11 +559,10 @@ int main(void) {
         printf("8. Search Process\n");
         printf("9. Display All Processes\n");
         printf("10. Save Processes\n");
-        printf("11. Load Processes\n");
-        printf("12. Compare Algorithms\n");
-        printf("13. Exit\n");
+        printf("11. Compare Algorithms\n");
+        printf("12. Exit\n");
 
-        choice = readInt("Enter your choice: ", 1, 13);
+        choice = readInt("Enter your choice: ", 1, 12);
         if (choice == -1) {
             free(p);
             return 1;
@@ -613,12 +611,9 @@ int main(void) {
                 saveProcesses(p, n);
                 break;
             case 11:
-                loadProcesses(p, &n);
-                break;
-            case 12:
                 compareAlgorithms(p, n);
                 break;
-            case 13:
+            case 12:
                 printf("Program ended.\n");
                 break;
         }
