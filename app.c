@@ -4,7 +4,6 @@
 #define MAX 10
 #define MAX_EVENTS 1000000
 
-/* Gantt chart arrays */
 static int order[MAX_EVENTS];
 static int start[MAX_EVENTS];
 static int end[MAX_EVENTS];
@@ -20,7 +19,6 @@ struct Process {
     int waitingTime;
 };
 
-/* Function prototypes */
 int readInt(const char prompt[], int min, int max);
 int findProcess(struct Process p[], int n, int pid);
 int inputProcesses(struct Process p[], int n);
@@ -42,7 +40,6 @@ void displayResults(struct Process p[], int n);
 void displayGantt(struct Process p[], int order[], int start[], int end[], int eventCount);
 void compareAlgorithms(struct Process p[], int n);
 
-/* Safe integer input */
 int readInt(const char prompt[], int min, int max) {
     int value, ch;
 
@@ -68,7 +65,6 @@ int readInt(const char prompt[], int min, int max) {
     }
 }
 
-/* Find process by ID */
 int findProcess(struct Process p[], int n, int pid) {
     int i;
     for (i = 0; i < n; i++) {
@@ -77,7 +73,6 @@ int findProcess(struct Process p[], int n, int pid) {
     return -1;
 }
 
-/* Input starting processes */
 int inputProcesses(struct Process p[], int n) {
     int i;
 
@@ -97,7 +92,6 @@ int inputProcesses(struct Process p[], int n) {
     return 1;
 }
 
-/* Bubble sort by arrival time */
 void sortByArrival(struct Process p[], int n) {
     int i, j;
     struct Process temp;
@@ -113,7 +107,6 @@ void sortByArrival(struct Process p[], int n) {
     }
 }
 
-/* Bubble sort by process ID */
 void sortByPID(struct Process p[], int n) {
     int i, j;
     struct Process temp;
@@ -129,7 +122,6 @@ void sortByPID(struct Process p[], int n) {
     }
 }
 
-/* Recursive binary search */
 int binarySearch(struct Process p[], int left, int right, int pid) {
     int mid;
 
@@ -142,7 +134,6 @@ int binarySearch(struct Process p[], int left, int right, int pid) {
     return binarySearch(p, mid + 1, right, pid);
 }
 
-/* Add a new process */
 void addProcess(struct Process p[], int *n) {
     int pid;
 
@@ -171,7 +162,6 @@ void addProcess(struct Process p[], int *n) {
     printf("Process added successfully!\n");
 }
 
-/* Update an existing process */
 void updateProcess(struct Process p[], int n) {
     int pid, index;
 
@@ -194,7 +184,6 @@ void updateProcess(struct Process p[], int n) {
     printf("Process updated successfully!\n");
 }
 
-/* Delete a process */
 void deleteProcess(struct Process p[], int *n) {
     int pid, index, i;
 
@@ -217,7 +206,6 @@ void deleteProcess(struct Process p[], int *n) {
     printf("Process deleted successfully!\n");
 }
 
-/* Search using recursive binary search */
 void searchProcess(struct Process p[], int n) {
     struct Process temp[MAX];
     int pid, i, index;
@@ -244,7 +232,6 @@ void searchProcess(struct Process p[], int n) {
     }
 }
 
-/* Display all processes */
 void displayProcesses(struct Process p[], int n) {
     int i;
 
@@ -261,7 +248,6 @@ void displayProcesses(struct Process p[], int n) {
     }
 }
 
-/* Save process data in a file */
 void saveProcesses(struct Process p[], int n) {
     FILE *fp;
     int i;
@@ -285,58 +271,6 @@ void saveProcesses(struct Process p[], int n) {
     printf("Processes saved in processes.txt successfully!\n");
 }
 
-/* Load process data from a file */
-void loadProcesses(struct Process p[], int *n) {
-    FILE *fp;
-    struct Process temp[MAX];
-    int count, i, j, duplicate;
-
-    fp = fopen("processes.txt", "r");
-    if (fp == NULL) {
-        perror("Could not open file");
-        return;
-    }
-
-    if (fscanf(fp, "%d", &count) != 1 || count < 0 || count > MAX) {
-        printf("File data is not valid.\n");
-        fclose(fp);
-        return;
-    }
-
-    for (i = 0; i < count; i++) {
-        if (fscanf(fp, "%d %d %d %d", &temp[i].pid,
-                   &temp[i].arrivalTime, &temp[i].burstTime,
-                   &temp[i].priority) != 4) {
-            printf("File data is incomplete or damaged.\n");
-            fclose(fp);
-            return;
-        }
-
-        if (temp[i].pid <= 0 || temp[i].arrivalTime < 0 ||
-            temp[i].burstTime <= 0 || temp[i].priority <= 0) {
-            printf("File contains invalid process values.\n");
-            fclose(fp);
-            return;
-        }
-
-        duplicate = 0;
-        for (j = 0; j < i; j++) {
-            if (temp[j].pid == temp[i].pid) duplicate = 1;
-        }
-        if (duplicate) {
-            printf("File contains duplicate Process IDs.\n");
-            fclose(fp);
-            return;
-        }
-    }
-
-    fclose(fp);
-    for (i = 0; i < count; i++) p[i] = temp[i];
-    *n = count;
-    printf("%d processes loaded successfully!\n", *n);
-}
-
-/* FCFS Scheduling */
 void runFCFS(struct Process p[], int n, int order[], int start[], int end[]) {
     int i;
     int currentTime = 0;
@@ -355,7 +289,6 @@ void runFCFS(struct Process p[], int n, int order[], int start[], int end[]) {
     }
 }
 
-/* SJF Scheduling - Non-Preemptive */
 void runSJF(struct Process p[], int n, int order[], int start[], int end[]) {
     int done[MAX] = {0};
     int completed = 0, currentTime = 0;
@@ -393,7 +326,6 @@ void runSJF(struct Process p[], int n, int order[], int start[], int end[]) {
     }
 }
 
-/* Priority Scheduling - Non-Preemptive (1 is highest priority) */
 void runPriority(struct Process p[], int n, int order[], int start[], int end[]) {
     int done[MAX] = {0};
     int completed = 0, currentTime = 0;
@@ -431,7 +363,6 @@ void runPriority(struct Process p[], int n, int order[], int start[], int end[])
     }
 }
 
-/* Round Robin Scheduling - Preemptive */
 int runRoundRobin(struct Process p[], int n, int order[], int start[], int end[], int quantum) {
     int remaining[MAX];
     int queue[MAX];
@@ -517,7 +448,6 @@ int runRoundRobin(struct Process p[], int n, int order[], int start[], int end[]
     return eventCount;
 }
 
-/* Display CT, TAT, WT and averages */
 void displayResults(struct Process p[], int n) {
     int i;
     float totalWT = 0, totalTAT = 0;
@@ -535,7 +465,6 @@ void displayResults(struct Process p[], int n) {
     printf("Average Turnaround Time: %.2f\n", totalTAT / n);
 }
 
-/* Display Gantt chart and use a 2D array for its values */
 void displayGantt(struct Process p[], int order[], int start[], int end[], int eventCount) {
     int i;
     int currentTime = 0;
@@ -557,7 +486,6 @@ void displayGantt(struct Process p[], int order[], int start[], int end[], int e
     printf("\n");
 }
 
-/* Run all algorithms on copies and compare average waiting time */
 void compareAlgorithms(struct Process p[], int n) {
     struct Process a[MAX], b[MAX], c[MAX], d[MAX];
     int i, events, quantum;
@@ -596,7 +524,6 @@ void compareAlgorithms(struct Process p[], int n) {
     printf("Round Robin\t%.2f\n", total4 / n);
 }
 
-/* Main Program */
 int main(void) {
     struct Process *p;
     int n, choice, quantum, eventCount;
