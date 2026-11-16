@@ -5,7 +5,7 @@ Matches the updated C program:
   * Algorithms : FCFS, SJF, Priority (non-preemptive), Round Robin (preemptive)
   * Process manager : add / update / delete / search (binary search by PID),
                       custom PIDs, max 10 processes
-  * Save / Load  : processes.txt (same file format as the C program)
+  * Save         : processes.txt (same file format as the C program)
   * Compare      : average waiting time of all four algorithms
 Extras : 3 live themes (Aurora / Sunset / Daylight), animated Gantt chart,
          Step mode, hover tooltips on the Gantt chart, toast notifications.
@@ -445,8 +445,7 @@ class App(tk.Tk):
                      ("✎ Update", self.update_process, T.accent2),
                      ("✕ Delete", self.delete_process, T.bad)],
                     [("🔍 Search", self.search_process, T.accent),
-                     ("💾 Save", self.save_processes, T.warn),
-                     ("📂 Load", self.load_processes, T.pink)],
+                     ("💾 Save", self.save_processes, T.warn)],
                     [("🎲 Random", self.load_random, T.neutral),
                      ("🧹 Clear", self.clear_all, T.neutral)]):
             f = tk.Frame(left, bg=T.card)
@@ -552,7 +551,7 @@ class App(tk.Tk):
                       fill="#ffffff", font=("Segoe UI", 19, "bold"))
         c.create_text(82, 53, anchor="w", fill=T.hsub, font=("Segoe UI", 9, "bold"),
                       text="FCFS  •  SJF  •  Priority  •  Round Robin   —   "
-                           "live Gantt chart, compare, save & load")
+                           "live Gantt chart, compare & save")
         x = W - 26
         for name in reversed(list(THEMES)):
             active = name == T.name
@@ -798,41 +797,6 @@ class App(tk.Tk):
             self.toast(f"Could not save file: {ex.strerror}", "bad")
             return
         self.toast(f"Processes saved in processes.txt successfully!", "good")
-
-    def load_processes(self):
-        try:
-            with open(SAVE_FILE) as f:
-                tok = f.read().split()
-        except OSError as ex:
-            self.toast(f"Could not open file: {ex.strerror}", "bad")
-            return
-        try:
-            nums = [int(x) for x in tok]
-        except ValueError:
-            self.toast("File data is incomplete or damaged.", "bad")
-            return
-        if not nums or nums[0] < 0 or nums[0] > MAX:
-            self.toast("File data is not valid.", "bad")
-            return
-        count = nums[0]
-        if len(nums) < 1 + 4 * count:
-            self.toast("File data is incomplete or damaged.", "bad")
-            return
-        new, seen = [], set()
-        for i in range(count):
-            pid, at, bt, pr = nums[1 + 4 * i: 5 + 4 * i]
-            if pid <= 0 or at < 0 or bt <= 0 or pr <= 0:
-                self.toast("File contains invalid process values.", "bad")
-                return
-            if pid in seen:
-                self.toast("File contains duplicate Process IDs.", "bad")
-                return
-            seen.add(pid)
-            new.append({"pid": pid, "at": at, "bt": bt, "pr": pr})
-        self.procs, self.cmap = new, {}
-        self.refresh_input()
-        self.changed()
-        self.toast(f"{count} processes loaded successfully!", "good")
 
     def clear_all(self):
         self.procs, self.cmap = [], {}
